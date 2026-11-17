@@ -1,0 +1,165 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mini Instagram</title>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<header>
+    <h1>📸 Mini Instagram</h1>
+    <p>Share your moments with the world!</p>
+</header>
+
+<div class="container">
+
+    {% with messages = get_flashed_messages() %}
+        {% for message in messages %}
+            <div class="message">{{ message }}</div>
+        {% endfor %}
+    {% endwith %}
+
+    <div class="card">
+        <h2>Create Account</h2>
+
+        <form action="/create_account" method="POST">
+            <input type="text" name="username"
+                   placeholder="Enter username" required>
+
+            <input type="text" name="bio"
+                   placeholder="Enter your bio" required>
+
+            <button type="submit">Create Account</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>View Profile</h2>
+
+        <form action="/profile" method="POST">
+            <input type="text" name="username"
+                   placeholder="Enter username" required>
+            <button type="submit">View Profile</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>Create Post</h2>
+
+        <form action="/create_post" method="POST">
+            <input type="text" name="username"
+                   placeholder="Enter username" required>
+
+            <textarea name="post"
+                      placeholder="What's on your mind?"
+                      required></textarea>
+
+            <button type="submit">Share Post</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>Follow User</h2>
+
+        <form action="/follow" method="POST">
+            <input type="text" name="username"
+                   placeholder="Your username" required>
+
+            <input type="text" name="target"
+                   placeholder="Username to follow" required>
+
+            <button type="submit">Follow</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>Update Bio</h2>
+
+        <form action="/update_bio" method="POST">
+            <input type="text" name="username"
+                   placeholder="Enter username" required>
+
+            <input type="text" name="bio"
+                   placeholder="Enter new bio" required>
+
+            <button type="submit">Update Bio</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>Manage Posts</h2>
+
+        <form action="/like_post" method="POST">
+            <input type="text" name="username"
+                   placeholder="Username" required>
+
+            <input type="number" name="post_id"
+                   placeholder="Post ID" required>
+
+            <button type="submit">❤️ Like Post</button>
+        </form>
+
+        <form action="/delete_post" method="POST">
+            <input type="text" name="username"
+                   placeholder="Username" required>
+
+            <input type="number" name="post_id"
+                   placeholder="Post ID" required>
+
+            <button type="submit" class="delete">
+                Delete Post
+            </button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>Registered Users</h2>
+
+        {% for username, details in instagram.items() %}
+            <div class="profile">
+                <h3>👤 @{{ username }}</h3>
+                <p>{{ details.bio }}</p>
+
+                <p>
+                    Followers: {{ details.followers }}
+                    |
+                    Following: {{ details.following|length }}
+                    |
+                    Posts: {{ details.posts|length }}
+                </p>
+
+                {% for post_id, post in details.posts.items() %}
+                    <div class="post">
+                        <p><b>Post ID:</b> {{ post_id }}</p>
+                        <p>{{ post.content }}</p>
+                        <p>❤️ {{ post.likes }} Likes</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No users registered yet.</p>
+        {% endfor %}
+    </div>
+
+    {% if selected_user is defined %}
+        <div class="card">
+            <h2>Selected Profile</h2>
+            <h3>@{{ selected_user }}</h3>
+            <p>{{ instagram[selected_user].bio }}</p>
+            <p>Followers: {{ instagram[selected_user].followers }}</p>
+            <p>Following: {{ instagram[selected_user].following|length }}</p>
+            <p>Posts: {{ instagram[selected_user].posts|length }}</p>
+        </div>
+    {% endif %}
+
+</div>
+
+<footer>
+    <p>Mini Instagram | Built using Python and Flask</p>
+</footer>
+
+</body>
+</html>
